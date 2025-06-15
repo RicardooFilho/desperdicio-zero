@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="CREATE_TABLE_DONATION_ITEM" author="ricardo.filho">
+        <validCheckSum>ANY</validCheckSum>
+
+        <preConditions onFail="MARK_RAN" onFailMessage="Tabela DONATION_ITEM já existe">
+            <not>
+                <tableExists tableName="DONATION_ITEM"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="DONATION_ITEM">
+            <column name="ID" type="${id}" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="PK_DONATION_ITEM"/>
+            </column>
+            <column name="QUANTITY" type="${id}"/>
+            <column name="ID_DONATION" type="${id}"/>
+            <column name="ID_FOOD" type="${id}"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="ADD_FK_DONATION_DONATION_ITEM" author="ricardo.filho">
+        <validCheckSum>ANY</validCheckSum>
+
+        <preConditions onFail="MARK_RAN" onFailMessage="A constraint FK_DONATION_DONATION_ITEM já existe">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FK_DONATION_DONATION_ITEM"
+                                            foreignKeyTableName="DONATION_ITEM"/>
+            </not>
+        </preConditions>
+
+        <addForeignKeyConstraint baseTableName="DONATION_ITEM"
+                                 baseColumnNames="ID_DONATION"
+                                 constraintName="FK_DONATION_DONATION_ITEM"
+                                 referencedTableName="DONATION"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+    <changeSet id="ADD_FK_FOOD_DONATION_ITEM" author="ricardo.filho">
+        <validCheckSum>ANY</validCheckSum>
+
+        <preConditions onFail="MARK_RAN" onFailMessage="A constraint FK_FOOD_DONATION_ITEM já existe">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FK_FOOD_DONATION_ITEM"
+                                            foreignKeyTableName="DONATION_ITEM"/>
+            </not>
+        </preConditions>
+
+        <addForeignKeyConstraint baseTableName="DONATION_ITEM"
+                                 baseColumnNames="ID_FOOD"
+                                 constraintName="FK_FOOD_DONATION_ITEM"
+                                 referencedTableName="FOOD"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+</databaseChangeLog>

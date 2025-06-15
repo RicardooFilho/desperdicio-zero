@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="CREATE_TABLE_INSTITUTION" author="ricardo.filho">
+        <validCheckSum>ANY</validCheckSum>
+
+        <preConditions onFail="MARK_RAN" onFailMessage="Tabela INSTITUTION já existe">
+            <not>
+                <tableExists tableName="INSTITUTION"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="INSTITUTION">
+            <column name="ID" type="${id}" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="PK_INSTITUTION"/>
+            </column>
+            <column name="NAME" type="${string255}"/>
+            <column name="DESCRIPTION" type="${string255}"/>
+            <column name="CNPJ" type="${string255}"/>
+            <column name="CAPACITY" type="${id}"/>
+            <column name="INSTITUTION_TYPE" type="${string255}"/>
+            <column name="ID_OWNER" type="${id}"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="ADD_FK_OWNER_INSTITUTION" author="ricardo.filho">
+        <validCheckSum>ANY</validCheckSum>
+
+        <preConditions onFail="MARK_RAN" onFailMessage="A constraint FK_OWNER_INSTITUTION já existe">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="FK_OWNER_INSTITUTION"
+                                            foreignKeyTableName="INSTITUTION"/>
+            </not>
+        </preConditions>
+
+        <addForeignKeyConstraint baseTableName="INSTITUTION"
+                                 baseColumnNames="ID_OWNER"
+                                 constraintName="FK_OWNER_INSTITUTION"
+                                 referencedTableName="PERSON"
+                                 referencedColumnNames="ID"/>
+    </changeSet>
+
+</databaseChangeLog>

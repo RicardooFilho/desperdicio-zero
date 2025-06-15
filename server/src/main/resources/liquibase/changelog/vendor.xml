@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="CREATE_TABLE_VENDOR" author="ricardo.filho">
+        <validCheckSum>ANY</validCheckSum>
+
+        <preConditions onFail="MARK_RAN" onFailMessage="Tabela VENDOR já existe">
+            <not>
+                <tableExists tableName="VENDOR"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="VENDOR">
+            <column name="ID" type="${id}" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="PK_VENDOR"/>
+            </column>
+            <column name="NAME" type="${string255}"/>
+            <column name="PHONE" type="${string255}"/>
+            <column name="ACTIVE" type="${boolean}"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
