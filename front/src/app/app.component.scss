@@ -1,4 +1,4 @@
-/* Reset and base styles */
+
 * {
   margin: 0;
   padding: 0;
@@ -16,7 +16,6 @@ body {
   min-height: 100vh;
 }
 
-/* Custom Material overrides */
 .mat-mdc-card {
   border-radius: 15px !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
@@ -40,7 +39,6 @@ body {
   margin-bottom: 10px;
 }
 
-/* Status chips */
 .status-chip {
   border-radius: 12px !important;
   font-size: 0.8rem !important;
@@ -72,7 +70,6 @@ body {
   }
 }
 
-/* Category chips for foods */
 .category-chip {
   border-radius: 12px !important;
   font-size: 0.8rem !important;
@@ -109,7 +106,6 @@ body {
   }
 }
 
-/* Institution type chips */
 .type-chip {
   border-radius: 12px !important;
   font-size: 0.8rem !important;
@@ -118,7 +114,6 @@ body {
   color: white !important;
 }
 
-/* Utility classes */
 .text-center { text-align: center; }
 .text-left { text-align: left; }
 .text-right { text-align: right; }
@@ -133,7 +128,6 @@ body {
 .mt-3 { margin-top: 24px; }
 .mt-4 { margin-top: 32px; }
 
-/* Responsive utilities */
 @media (max-width: 768px) {
   .hide-mobile { display: none !important; }
 }
@@ -142,7 +136,7 @@ body {
   .hide-desktop { display: none !important; }
 }
 
-/* Animation utilities */
+
 .fade-in {
   animation: fadeIn 0.5s ease-in;
 }
@@ -161,12 +155,10 @@ body {
   to { transform: translateY(0); }
 }
 
-/* Loading spinner customization */
 .mat-mdc-progress-spinner {
   --mdc-circular-progress-active-indicator-color: #4CAF50;
 }
 
-/* Table customizations */
 .mat-mdc-table {
   background: transparent !important;
 
@@ -179,13 +171,11 @@ body {
   }
 }
 
-/* Form customizations */
 .mat-mdc-text-field-wrapper {
   background: rgba(255, 255, 255, 0.9) !important;
   border-radius: 8px !important;
 }
 
-/* Scrollbar customization */
 ::-webkit-scrollbar {
   width: 8px;
 }
