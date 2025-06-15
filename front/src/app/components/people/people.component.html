@@ -1,0 +1,113 @@
+<div class="people-container">
+  <div class="page-header">
+    <h1>Gerenciar Pessoas</h1>
+    <p>Cadastre e gerencie pessoas do sistema</p>
+  </div>
+
+  <div class="content-layout">
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>
+          {{ isEditing ? 'Editar Pessoa' : 'Nova Pessoa' }}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="personForm" (ngSubmit)="onSubmit()" class="person-form">
+          <mat-form-field>
+            <mat-label>Nome da Pessoa</mat-label>
+            <input matInput formControlName="name" placeholder="Nome completo">
+            <mat-error *ngIf="personForm.get('name')?.hasError('required')">
+              Nome é obrigatório
+            </mat-error>
+            <mat-error *ngIf="personForm.get('name')?.hasError('minlength')">
+              Nome deve ter pelo menos 2 caracteres
+            </mat-error>
+          </mat-form-field>
+
+          <div class="form-actions">
+            <button mat-raised-button color="primary" type="submit"
+                    [disabled]="!personForm.valid || isLoading">
+              <mat-icon>{{ isEditing ? 'save' : 'add' }}</mat-icon>
+              {{ isEditing ? 'Atualizar' : 'Cadastrar' }}
+            </button>
+
+            <button *ngIf="isEditing" mat-button type="button" (click)="resetForm()">
+              <mat-icon>cancel</mat-icon>
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="list-card">
+      <mat-card-header>
+        <mat-card-title>
+          Pessoas Cadastradas ({{ people.length }})
+        </mat-card-title>
+        <mat-card-subtitle>
+          <button mat-icon-button color="primary" (click)="loadPeople()" [disabled]="isLoading">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div *ngIf="isLoading" class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Carregando pessoas...</p>
+        </div>
+
+        <div *ngIf="!isLoading && people.length === 0" class="no-data">
+          <mat-icon class="no-data-icon">people</mat-icon>
+          <h3>Nenhuma pessoa cadastrada</h3>
+          <p>Cadastre a primeira pessoa usando o formulário ao lado</p>
+        </div>
+
+        <mat-table *ngIf="!isLoading && people.length > 0" [dataSource]="people" class="people-table">
+          <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
+            <mat-cell *matCellDef="let person">{{ person.id }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef>Nome</mat-header-cell>
+            <mat-cell *matCellDef="let person">{{ person.name }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="active">
+            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-cell *matCellDef="let person">
+              <mat-chip [class]="getStatusClass(person.active)">
+                {{ getStatusText(person.active) }}
+              </mat-chip>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="dataCadastro">
+            <mat-header-cell *matHeaderCellDef>Data Cadastro</mat-header-cell>
+            <mat-cell *matCellDef="let person">
+              {{ person.dataCadastro ? formatDate(person.dataCadastro) : '-' }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Ações</mat-header-cell>
+            <mat-cell *matCellDef="let person">
+              <button mat-icon-button color="primary" (click)="editPerson(person)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deletePerson(person)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

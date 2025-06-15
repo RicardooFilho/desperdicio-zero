@@ -1,0 +1,159 @@
+<div class="foods-container">
+  <div class="page-header">
+    <h1>Catálogo de Alimentos</h1>
+    <p>Gerencie os tipos de alimentos disponíveis</p>
+  </div>
+
+  <div class="content-layout">
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>
+          {{ isEditing ? 'Editar Alimento' : 'Novo Alimento' }}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="foodForm" (ngSubmit)="onSubmit()" class="food-form">
+          <mat-form-field>
+            <mat-label>Nome do Alimento</mat-label>
+            <input matInput formControlName="name" placeholder="Ex: Banana">
+            <mat-error *ngIf="foodForm.get('name')?.hasError('required')">
+              Nome é obrigatório
+            </mat-error>
+            <mat-error *ngIf="foodForm.get('name')?.hasError('minlength')">
+              Nome deve ter pelo menos 2 caracteres
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Categoria</mat-label>
+            <mat-select formControlName="category">
+              <mat-option *ngFor="let category of categories" [value]="category.value">
+                {{ category.label }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="foodForm.get('category')?.hasError('required')">
+              Categoria é obrigatória
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Descrição</mat-label>
+            <textarea matInput formControlName="description" rows="3"
+                      placeholder="Descrição opcional do alimento"></textarea>
+          </mat-form-field>
+
+          <div class="checkbox-field">
+            <mat-checkbox formControlName="perishable">
+              Alimento perecível
+            </mat-checkbox>
+          </div>
+
+          <mat-form-field>
+            <mat-label>Vida útil (dias)</mat-label>
+            <input matInput type="number" formControlName="shelfLife" placeholder="7">
+            <mat-error *ngIf="foodForm.get('shelfLife')?.hasError('min')">
+              Vida útil deve ser maior que 0
+            </mat-error>
+          </mat-form-field>
+
+          <div class="form-actions">
+            <button mat-raised-button color="primary" type="submit"
+                    [disabled]="!foodForm.valid || isLoading">
+              <mat-icon>{{ isEditing ? 'save' : 'add' }}</mat-icon>
+              {{ isEditing ? 'Atualizar' : 'Cadastrar' }}
+            </button>
+
+            <button *ngIf="isEditing" mat-button type="button" (click)="resetForm()">
+              <mat-icon>cancel</mat-icon>
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="list-card">
+      <mat-card-header>
+        <mat-card-title>
+          Alimentos Cadastrados ({{ foods.length }})
+        </mat-card-title>
+        <mat-card-subtitle>
+          <button mat-icon-button color="primary" (click)="loadFoods()" [disabled]="isLoading">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div *ngIf="isLoading" class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Carregando alimentos...</p>
+        </div>
+
+        <div *ngIf="!isLoading && foods.length === 0" class="no-data">
+          <mat-icon class="no-data-icon">restaurant</mat-icon>
+          <h3>Nenhum alimento cadastrado</h3>
+          <p>Cadastre o primeiro alimento usando o formulário ao lado</p>
+        </div>
+
+        <mat-table *ngIf="!isLoading && foods.length > 0" [dataSource]="foods" class="foods-table">
+          <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
+            <mat-cell *matCellDef="let food">{{ food.id }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef>Nome</mat-header-cell>
+            <mat-cell *matCellDef="let food">
+              <div class="food-name">
+                <strong>{{ food.name }}</strong>
+                <small *ngIf="food.description">{{ food.description }}</small>
+              </div>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="category">
+            <mat-header-cell *matHeaderCellDef>Categoria</mat-header-cell>
+            <mat-cell *matCellDef="let food">
+              <mat-chip [class]="'category-chip ' + getCategoryClass(food.category)">
+                {{ getCategoryLabel(food.category) }}
+              </mat-chip>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="perishable">
+            <mat-header-cell *matHeaderCellDef>Perecível</mat-header-cell>
+            <mat-cell *matCellDef="let food">
+              <mat-icon [style.color]="food.perishable ? '#FF9800' : '#4CAF50'">
+                {{ food.perishable ? 'schedule' : 'check_circle' }}
+              </mat-icon>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="shelfLife">
+            <mat-header-cell *matHeaderCellDef>Vida Útil</mat-header-cell>
+            <mat-cell *matCellDef="let food">
+              {{ food.shelfLife ? food.shelfLife + ' dias' : '-' }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Ações</mat-header-cell>
+            <mat-cell *matCellDef="let food">
+              <button mat-icon-button color="primary" (click)="editFood(food)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteFood(food)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

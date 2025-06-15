@@ -1,0 +1,167 @@
+<div class="institutions-container">
+  <div class="page-header">
+    <h1>Gerenciar Instituições</h1>
+    <p>Cadastre e gerencie ONGs, abrigos e escolas</p>
+  </div>
+
+  <div class="content-layout">
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>
+          {{ isEditing ? 'Editar Instituição' : 'Nova Instituição' }}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="institutionForm" (ngSubmit)="onSubmit()" class="institution-form">
+          <mat-form-field>
+            <mat-label>Nome da Instituição</mat-label>
+            <input matInput formControlName="name" placeholder="Nome da instituição">
+            <mat-error *ngIf="institutionForm.get('name')?.hasError('required')">
+              Nome é obrigatório
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Tipo</mat-label>
+            <mat-select formControlName="institutionType">
+              <mat-option *ngFor="let type of institutionTypes" [value]="type.value">
+                {{ type.label }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="institutionForm.get('institutionType')?.hasError('required')">
+              Tipo é obrigatório
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>CNPJ (opcional)</mat-label>
+            <input matInput formControlName="cnpj" placeholder="00.000.000/0000-00">
+            <mat-error *ngIf="institutionForm.get('cnpj')?.hasError('pattern')">
+              Formato: 00.000.000/0000-00
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Capacidade</mat-label>
+            <input matInput type="number" formControlName="capacity" placeholder="Número de pessoas atendidas">
+            <mat-error *ngIf="institutionForm.get('capacity')?.hasError('min')">
+              Capacidade deve ser maior que 0
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Responsável</mat-label>
+            <mat-select formControlName="ownerId">
+              <mat-option value="">Selecione uma pessoa</mat-option>
+              <mat-option *ngFor="let person of people" [value]="person.id">
+                {{ person.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Descrição</mat-label>
+            <textarea matInput formControlName="description" rows="3"
+                      placeholder="Descrição da instituição"></textarea>
+          </mat-form-field>
+
+          <div class="form-actions">
+            <button mat-raised-button color="primary" type="submit"
+                    [disabled]="!institutionForm.valid || isLoading">
+              <mat-icon>{{ isEditing ? 'save' : 'add' }}</mat-icon>
+              {{ isEditing ? 'Atualizar' : 'Cadastrar' }}
+            </button>
+
+            <button *ngIf="isEditing" mat-button type="button" (click)="resetForm()">
+              <mat-icon>cancel</mat-icon>
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="list-card">
+      <mat-card-header>
+        <mat-card-title>
+          Instituições Cadastradas ({{ institutions.length }})
+        </mat-card-title>
+        <mat-card-subtitle>
+          <button mat-icon-button color="primary" (click)="loadInstitutions()" [disabled]="isLoading">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div *ngIf="isLoading" class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Carregando instituições...</p>
+        </div>
+
+        <div *ngIf="!isLoading && institutions.length === 0" class="no-data">
+          <mat-icon class="no-data-icon">volunteer_activism</mat-icon>
+          <h3>Nenhuma instituição cadastrada</h3>
+          <p>Cadastre a primeira instituição usando o formulário ao lado</p>
+        </div>
+
+        <mat-table *ngIf="!isLoading && institutions.length > 0" [dataSource]="institutions" class="institutions-table">
+          <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
+            <mat-cell *matCellDef="let institution">{{ institution.id }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef>Nome</mat-header-cell>
+            <mat-cell *matCellDef="let institution">
+              <div class="institution-name">
+                <strong>{{ institution.name }}</strong>
+                <small *ngIf="institution.description">{{ institution.description }}</small>
+              </div>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="cnpj">
+            <mat-header-cell *matHeaderCellDef>CNPJ</mat-header-cell>
+            <mat-cell *matCellDef="let institution">{{ institution.cnpj || '-' }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="institutionType">
+            <mat-header-cell *matHeaderCellDef>Tipo</mat-header-cell>
+            <mat-cell *matCellDef="let institution">
+              <mat-chip class="type-chip">
+                {{ getInstitutionTypeLabel(institution.institutionType) }}
+              </mat-chip>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="capacity">
+            <mat-header-cell *matHeaderCellDef>Capacidade</mat-header-cell>
+            <mat-cell *matCellDef="let institution">{{ institution.capacity || '-' }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="owner">
+            <mat-header-cell *matHeaderCellDef>Responsável</mat-header-cell>
+            <mat-cell *matCellDef="let institution">{{ institution.owner?.name || '-' }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Ações</mat-header-cell>
+            <mat-cell *matCellDef="let institution">
+              <button mat-icon-button color="primary" (click)="editInstitution(institution)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteInstitution(institution)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

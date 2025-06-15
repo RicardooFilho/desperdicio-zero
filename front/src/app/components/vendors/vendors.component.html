@@ -1,0 +1,122 @@
+<div class="vendors-container">
+  <div class="page-header">
+    <h1>Gerenciar Feirantes</h1>
+    <p>Cadastre e gerencie feirantes, vendedores e produtores</p>
+  </div>
+
+  <div class="content-layout">
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>
+          {{ isEditing ? 'Editar Feirante' : 'Novo Feirante' }}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="vendorForm" (ngSubmit)="onSubmit()" class="vendor-form">
+          <mat-form-field>
+            <mat-label>Nome</mat-label>
+            <input matInput formControlName="name" placeholder="Nome do feirante">
+            <mat-error *ngIf="vendorForm.get('name')?.hasError('required')">
+              Nome é obrigatório
+            </mat-error>
+            <mat-error *ngIf="vendorForm.get('name')?.hasError('minlength')">
+              Nome deve ter pelo menos 2 caracteres
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Telefone</mat-label>
+            <input matInput formControlName="phone" placeholder="(11) 99999-9999">
+            <mat-error *ngIf="vendorForm.get('phone')?.hasError('required')">
+              Telefone é obrigatório
+            </mat-error>
+            <mat-error *ngIf="vendorForm.get('phone')?.hasError('pattern')">
+              Formato: (11) 99999-9999
+            </mat-error>
+          </mat-form-field>
+
+          <div class="form-actions">
+            <button mat-raised-button color="primary" type="submit"
+                    [disabled]="!vendorForm.valid || isLoading">
+              <mat-icon>{{ isEditing ? 'save' : 'add' }}</mat-icon>
+              {{ isEditing ? 'Atualizar' : 'Cadastrar' }}
+            </button>
+
+            <button *ngIf="isEditing" mat-button type="button" (click)="resetForm()">
+              <mat-icon>cancel</mat-icon>
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="list-card">
+      <mat-card-header>
+        <mat-card-title>
+          Feirantes Cadastrados ({{ vendors.length }})
+        </mat-card-title>
+        <mat-card-subtitle>
+          <button mat-icon-button color="primary" (click)="loadVendors()" [disabled]="isLoading">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div *ngIf="isLoading" class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Carregando feirantes...</p>
+        </div>
+
+        <div *ngIf="!isLoading && vendors.length === 0" class="no-data">
+          <mat-icon class="no-data-icon">store</mat-icon>
+          <h3>Nenhum feirante cadastrado</h3>
+          <p>Cadastre o primeiro feirante usando o formulário ao lado</p>
+        </div>
+
+        <mat-table *ngIf="!isLoading && vendors.length > 0" [dataSource]="vendors" class="vendors-table">
+          <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef>ID</mat-header-cell>
+            <mat-cell *matCellDef="let vendor">{{ vendor.id }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef>Nome</mat-header-cell>
+            <mat-cell *matCellDef="let vendor">{{ vendor.name }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="phone">
+            <mat-header-cell *matHeaderCellDef>Telefone</mat-header-cell>
+            <mat-cell *matCellDef="let vendor">{{ vendor.phone }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="active">
+            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-cell *matCellDef="let vendor">
+              <mat-chip [class]="getStatusClass(vendor.active)">
+                {{ getStatusText(vendor.active) }}
+              </mat-chip>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Ações</mat-header-cell>
+            <mat-cell *matCellDef="let vendor">
+              <button mat-icon-button color="primary" (click)="editVendor(vendor)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteVendor(vendor)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </mat-table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

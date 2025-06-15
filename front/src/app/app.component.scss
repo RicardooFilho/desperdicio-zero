@@ -1,0 +1,205 @@
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Roboto', sans-serif;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+/* Custom Material overrides */
+.mat-mdc-card {
+  border-radius: 15px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.mat-mdc-raised-button {
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+}
+
+.mat-mdc-button.mat-primary {
+  background: linear-gradient(135deg, #4CAF50, #2E7D32) !important;
+  color: white !important;
+}
+
+.mat-mdc-form-field {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+/* Status chips */
+.status-chip {
+  border-radius: 12px !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+
+  &.status-active {
+    background: #4CAF50 !important;
+    color: white !important;
+  }
+
+  &.status-inactive {
+    background: #9E9E9E !important;
+    color: white !important;
+  }
+
+  &.disponivel {
+    background: #4CAF50 !important;
+    color: white !important;
+  }
+
+  &.coletado {
+    background: #2196F3 !important;
+    color: white !important;
+  }
+
+  &.cancelado {
+    background: #F44336 !important;
+    color: white !important;
+  }
+}
+
+/* Category chips for foods */
+.category-chip {
+  border-radius: 12px !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+
+  &.fruta {
+    background: #FF5722 !important;
+    color: white !important;
+  }
+
+  &.verdura {
+    background: #4CAF50 !important;
+    color: white !important;
+  }
+
+  &.legume {
+    background: #8BC34A !important;
+    color: white !important;
+  }
+
+  &.grao {
+    background: #795548 !important;
+    color: white !important;
+  }
+
+  &.salgado {
+    background: #FF9800 !important;
+    color: white !important;
+  }
+
+  &.doce {
+    background: #E91E63 !important;
+    color: white !important;
+  }
+}
+
+/* Institution type chips */
+.type-chip {
+  border-radius: 12px !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+  background: #2196F3 !important;
+  color: white !important;
+}
+
+/* Utility classes */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.mb-1 { margin-bottom: 8px; }
+.mb-2 { margin-bottom: 16px; }
+.mb-3 { margin-bottom: 24px; }
+.mb-4 { margin-bottom: 32px; }
+
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 16px; }
+.mt-3 { margin-top: 24px; }
+.mt-4 { margin-top: 32px; }
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .hide-mobile { display: none !important; }
+}
+
+@media (min-width: 769px) {
+  .hide-desktop { display: none !important; }
+}
+
+/* Animation utilities */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* Loading spinner customization */
+.mat-mdc-progress-spinner {
+  --mdc-circular-progress-active-indicator-color: #4CAF50;
+}
+
+/* Table customizations */
+.mat-mdc-table {
+  background: transparent !important;
+
+  .mat-mdc-header-row {
+    background: rgba(245, 245, 245, 0.8) !important;
+  }
+
+  .mat-mdc-row:hover {
+    background: rgba(76, 175, 80, 0.05) !important;
+  }
+}
+
+/* Form customizations */
+.mat-mdc-text-field-wrapper {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-radius: 8px !important;
+}
+
+/* Scrollbar customization */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(76, 175, 80, 0.6);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(76, 175, 80, 0.8);
+}
